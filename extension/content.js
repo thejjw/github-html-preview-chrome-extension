@@ -4,6 +4,7 @@
 (function () {
   "use strict";
   const BUTTON_ID = "github-local-html-preview-button";
+  const BUTTON_WRAPPER_ID = "github-local-html-preview-wrapper";
   const JSON_SELECTOR = "script[data-target='react-app.embeddedData'], script[type='application/json']";
   const LINE_SELECTORS = ["[data-testid='code-cell']", "td.blob-code", ".react-code-line-contents"];
   let scheduled = false;
@@ -35,9 +36,11 @@
   }
 
   async function preview(button, page) {
-    button.disabled = true;
-    const original = button.textContent;
-    button.textContent = "Loading...";
+    const label = button.querySelector("[data-component='text']") || button;
+    const original = label.textContent;
+    button.setAttribute("aria-disabled", "true");
+    button.style.pointerEvents = "none";
+    label.textContent = "Loading...";
     try {
       const html = await extractSource();
       console.debug("GitHub Local HTML Preview: sending preview", {
@@ -51,8 +54,9 @@
       console.error("GitHub Local HTML Preview failed", error);
       alert(`Local HTML preview: ${error.message}`);
     } finally {
-      button.disabled = false;
-      button.textContent = original;
+      button.removeAttribute("aria-disabled");
+      button.style.pointerEvents = "";
+      label.textContent = original;
     }
   }
 
@@ -64,20 +68,25 @@
     scheduled = false;
     const page = GitHubHtmlPreview.parseBlobUrl(location.href);
     const existing = document.getElementById(BUTTON_ID);
-    if (!page) { existing?.remove(); return; }
+    if (!page) { document.getElementById(BUTTON_WRAPPER_ID)?.remove(); return; }
     if (existing?.dataset.sourceUrl === location.href) return;
-    existing?.remove();
+    document.getElementById(BUTTON_WRAPPER_ID)?.remove();
     const raw = findRawControl();
     if (!raw?.parentElement) return;
-    const button = document.createElement("button");
+    // Clone GitHub's current Raw control and its ButtonGroup item to preserve native layout.
+    const wrapper = raw.parentElement.cloneNode(false);
+    const button = raw.cloneNode(true);
+    wrapper.id = BUTTON_WRAPPER_ID;
     button.id = BUTTON_ID;
-    button.type = "button";
     button.dataset.sourceUrl = location.href;
-    button.className = raw.className;
-    button.textContent = "Preview";
-    button.style.marginInlineStart = "0.5rem";
-    button.addEventListener("click", () => preview(button, page));
-    raw.insertAdjacentElement("afterend", button);
+    button.setAttribute("href", "#");
+    button.setAttribute("role", "button");
+    button.removeAttribute("data-testid");
+    const label = button.querySelector("[data-component='text']") || button;
+    label.textContent = "Preview";
+    button.addEventListener("click", (event) => { event.preventDefault(); preview(button, page); });
+    wrapper.append(button);
+    raw.parentElement.insertAdjacentElement("afterend", wrapper);
   }
 
   function schedule() {
