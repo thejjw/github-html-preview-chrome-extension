@@ -9,7 +9,7 @@ The dependency-free Chrome extension adds a **Preview** button beside GitHub's *
 - **Private repository support:** Reuses the GitHub access you already have without OAuth, personal access tokens, or GitHub App authorization.
 - **Local processing:** Never sends source to an extension developer, proxy, or hosted preview service.
 - **Safe by default:** Renders inline CSS and data assets while scripts and external resources remain blocked.
-- **Explicit script mode:** Runs inline JavaScript only after you enable **Run scripts** for that preview.
+- **Explicit script mode:** Runs inline JavaScript and referenced external scripts only after you enable **Run scripts** for that preview.
 - **GitHub navigation support:** Updates the button as GitHub moves between files without a full page load.
 - **No build step:** Uses plain Manifest V3 HTML, CSS, and JavaScript with no runtime dependencies.
 
@@ -32,7 +32,7 @@ The dependency-free Chrome extension adds a **Preview** button beside GitHub's *
 - Private repositories work only when you can already open the blob page in the current GitHub session. Organization SSO, IP restrictions, and browser extension policies still apply.
 - Source is processed locally, held briefly in memory-backed `chrome.storage.session`, consumed once, and never persisted, synchronized, or sent to the extension developer.
 - Scripts are off for every new preview. Inline CSS and `data:`/`blob:` images and fonts work; external scripts, styles, images, frames, media, forms, refreshes, popups, requests, and non-fragment links are blocked.
-- **Run scripts** explicitly recreates the opaque-origin preview with inline scripts enabled. Scripts cannot access GitHub cookies, the GitHub DOM, extension APIs, the preview toolbar, the parent frame, or popups/top-level navigation. They may make outbound requests or navigate their own isolated frame.
+- **Run scripts** explicitly recreates the opaque-origin preview with inline and referenced external scripts enabled. Scripts cannot access GitHub cookies, the GitHub DOM, extension APIs, the preview toolbar, the parent frame, or popups/top-level navigation. They may contact third parties, make outbound requests, or navigate their own isolated frame.
 
 The extension requests only `storage` and install-time access to `https://github.com/*`. It does not request `identity`, `cookies`, `tabs`, `<all_urls>`, raw-content hosts, or network-blocking permissions.
 
@@ -62,7 +62,7 @@ For manual validation, test one public and one organization-private repository. 
 
 ## V1 limitations and future design
 
-V1 targets `github.com` and self-contained HTML. Repository-relative assets and multi-file sites are unsupported. Referenced CSS, images, fonts, and script files are intentionally not fetched.
+V1 targets `github.com` and self-contained HTML. Repository-relative assets and multi-file sites are unsupported. Referenced CSS, images, and fonts are intentionally not fetched; referenced external scripts run only after explicit opt-in.
 
 Future work:
 
