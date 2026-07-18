@@ -8,7 +8,17 @@ const PREVIEW_PREFIX = "preview:";
 /** Validate, store, and open a single-use preview. */
 async function openPreview(message, sender) {
   const payload = GitHubHtmlPreview.validateOpenMessage(message, sender.url);
-  if (!payload) throw new Error("Invalid preview request.");
+  if (!payload) {
+    // Log only metadata for troubleshooting; repository HTML must never reach extension logs.
+    console.warn("Rejected OPEN_PREVIEW", {
+      senderUrl: sender.url,
+      sourceUrl: message?.payload?.sourceUrl,
+      filename: message?.payload?.filename,
+      htmlCharacters: typeof message?.payload?.html === "string" ? message.payload.html.length : null,
+      createdAt: message?.payload?.createdAt,
+    });
+    throw new Error("Invalid preview request. Reload the extension and GitHub page, then try again.");
+  }
   const id = crypto.randomUUID();
   await chrome.storage.session.set({ [`${PREVIEW_PREFIX}${id}`]: payload });
   await chrome.tabs.create({ url: chrome.runtime.getURL(`preview.html?id=${encodeURIComponent(id)}`) });

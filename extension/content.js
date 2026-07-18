@@ -40,9 +40,15 @@
     button.textContent = "Loading...";
     try {
       const html = await extractSource();
+      console.debug("GitHub Local HTML Preview: sending preview", {
+        sourceUrl: location.href,
+        filename: page.filename,
+        htmlCharacters: html.length,
+      });
       const response = await chrome.runtime.sendMessage({ type: "OPEN_PREVIEW", payload: { html, filename: page.filename, sourceUrl: location.href, createdAt: Date.now() } });
       if (!response?.ok) throw new Error(response?.error || "The preview could not be opened.");
     } catch (error) {
+      console.error("GitHub Local HTML Preview failed", error);
       alert(`Local HTML preview: ${error.message}`);
     } finally {
       button.disabled = false;

@@ -39,8 +39,10 @@ test("validates exact, fresh messages and sender URLs", () => {
   const url = "https://github.com/o/r/blob/main/a.html";
   const payload = { html: "<p>x</p>", filename: "a.html", sourceUrl: url, createdAt: Date.now() };
   assert.deepEqual(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, url), payload);
+  assert.deepEqual(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, "https://github.com/o/r/issues"), payload);
   assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, "https://evil.test/x"), null);
   assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload: { ...payload, filename: "b.html" } }, url), null);
+  assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload: { ...payload, sourceUrl: "https://evil.test/a.html" } }, url), null);
   assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload: { ...payload, createdAt: 0 } }, url), null);
   assert.equal(core.validateOpenMessage({ type: "OTHER", payload }, url), null);
 });

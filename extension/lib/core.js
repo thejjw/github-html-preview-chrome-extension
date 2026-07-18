@@ -75,11 +75,13 @@
   /** Validate an OPEN_PREVIEW request from a GitHub content script. */
   function validateOpenMessage(message, senderUrl) {
     if (!message || message.type !== "OPEN_PREVIEW" || typeof message.payload !== "object") return null;
-    const page = parseBlobUrl(senderUrl);
-    if (!page) return null;
+    let sender;
+    try { sender = new URL(senderUrl); } catch { return null; }
+    if (sender.protocol !== "https:" || sender.hostname !== "github.com") return null;
     const { html, filename, sourceUrl, createdAt } = message.payload;
     const source = parseBlobUrl(sourceUrl);
-    if (!source || sourceUrl !== senderUrl || filename !== page.filename || filename.length > MAX_FILENAME_LENGTH) return null;
+    // sender.url remains tied to the content-script document across GitHub soft navigations.
+    if (!source || filename !== source.filename || filename.length > MAX_FILENAME_LENGTH) return null;
     if (!Number.isFinite(createdAt) || Math.abs(Date.now() - createdAt) > 60_000) return null;
     try { validateHtml(html); } catch { return null; }
     return { html, filename, sourceUrl, createdAt };
