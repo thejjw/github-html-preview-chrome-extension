@@ -24,14 +24,13 @@
       });
       doc.querySelectorAll("a").forEach((node) => { if (!(node.getAttribute("href") || "").startsWith("#")) node.removeAttribute("href"); });
     } else {
-      doc.querySelectorAll("script[src]").forEach((node) => node.remove());
       doc.querySelectorAll("iframe[src]").forEach((node) => node.removeAttribute("src"));
       doc.querySelectorAll("form").forEach((node) => node.removeAttribute("target"));
     }
     const csp = doc.createElement("meta");
     csp.httpEquiv = "Content-Security-Policy";
     csp.content = runScripts
-      ? "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; connect-src *; form-action *"
+      ? "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; connect-src *; form-action *"
       : "default-src 'none'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; form-action 'none'";
     doc.head.prepend(csp);
     return `<!doctype html>\n${doc.documentElement.outerHTML}`;
