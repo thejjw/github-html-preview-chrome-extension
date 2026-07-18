@@ -13,7 +13,10 @@
     error.textContent = "This preview has expired or was already opened. Return to GitHub and select Preview again.";
     return;
   }
-  document.getElementById("filename").textContent = payload.filename;
+  const filename = document.getElementById("filename");
+  filename.textContent = payload.filename;
+  filename.title = payload.sourceUrl;
+  filename.setAttribute("aria-label", `${payload.filename}. Source: ${payload.sourceUrl}`);
   document.title = `${payload.filename} - Local preview`;
   const source = document.getElementById("source");
   source.href = payload.sourceUrl;

@@ -8,9 +8,12 @@
 </head>
 <body>
   <header>
-    <strong id="filename">Local HTML preview</strong>
+    <strong id="filename" title="Source URL">Local HTML preview</strong>
     <a id="source" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-    <label><input id="scripts" type="checkbox"> Run scripts</label>
+    <label id="scripts-label" title="Runs code from this HTML, including third-party scripts and network requests, inside an isolated sandbox. Use at your own risk.">
+      <input id="scripts" type="checkbox" aria-describedby="scripts-warning"> Run scripts
+    </label>
+    <span id="scripts-warning" class="visually-hidden">Runs code from this HTML, including third-party scripts and network requests, inside an isolated sandbox. Use at your own risk.</span>
   </header>
   <iframe id="sandbox" src="sandbox.html" title="HTML preview"></iframe>
   <p id="error" role="alert" hidden></p>

@@ -6,6 +6,8 @@ const path = require("node:path");
 const root = path.join(__dirname, "..");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "extension", "manifest.json"), "utf8"));
 const sandbox = fs.readFileSync(path.join(root, "extension", "sandbox.js"), "utf8");
+const previewHtml = fs.readFileSync(path.join(root, "extension", "preview.html"), "utf8");
+const previewJs = fs.readFileSync(path.join(root, "extension", "preview.js"), "utf8");
 
 test("manifest has a minimal permission surface", () => {
   assert.deepEqual(manifest.permissions, ["storage"]);
@@ -33,4 +35,10 @@ test("script mode permits referenced scripts only after opt-in", () => {
   assert.match(sandbox, /script-src 'unsafe-inline' 'unsafe-eval' https: http: data: blob:/);
   assert.match(manifest.content_security_policy.sandbox, /script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:/);
   assert.match(sandbox, /event\.data\.runScripts \? "allow-scripts" : ""/);
+});
+
+test("preview explains source and script risk accessibly", () => {
+  assert.match(previewJs, /filename\.title = payload\.sourceUrl/);
+  assert.match(previewHtml, /aria-describedby="scripts-warning"/);
+  assert.match(previewHtml, /Use at your own risk\./);
 });
