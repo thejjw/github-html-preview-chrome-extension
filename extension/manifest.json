@@ -10,7 +10,7 @@
   "background": { "service_worker": "background.js" },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'",
-    "sandbox": "sandbox allow-scripts; default-src 'self' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; connect-src *; style-src 'self' 'unsafe-inline'; img-src data: blob:; font-src data: blob:; frame-src 'self' data: blob:"
+    "sandbox": "sandbox allow-scripts; default-src 'self' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; connect-src *; style-src 'self' 'unsafe-inline' https:; img-src https: data: blob:; font-src https: data: blob:; media-src https: data: blob:; frame-src 'self' data: blob:"
   },
   "content_scripts": [{
     "matches": ["https://github.com/*"],

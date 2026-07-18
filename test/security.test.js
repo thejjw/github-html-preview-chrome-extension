@@ -34,11 +34,17 @@ test("script mode permits referenced scripts only after opt-in", () => {
   assert.doesNotMatch(sandbox, /querySelectorAll\("script\[src\]"\)/);
   assert.match(sandbox, /script-src 'unsafe-inline' 'unsafe-eval' https: http: data: blob:/);
   assert.match(manifest.content_security_policy.sandbox, /script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:/);
+  assert.match(manifest.content_security_policy.sandbox, /style-src 'self' 'unsafe-inline' https:/);
+  assert.match(manifest.content_security_policy.sandbox, /img-src https: data: blob:/);
+  assert.match(manifest.content_security_policy.sandbox, /font-src https: data: blob:/);
+  assert.match(manifest.content_security_policy.sandbox, /media-src https: data: blob:/);
   assert.match(sandbox, /event\.data\.runScripts \? "allow-scripts" : ""/);
 });
 
 test("preview explains source and script risk accessibly", () => {
   assert.match(previewJs, /filename\.title = payload\.sourceUrl/);
   assert.match(previewHtml, /aria-describedby="scripts-warning"/);
+  assert.match(previewHtml, /Allow active content/);
+  assert.match(previewHtml, /absolute HTTPS assets/);
   assert.match(previewHtml, /Use at your own risk\./);
 });
