@@ -2,4 +2,4 @@ This extension does not collect, transmit, or persist any personal browsing data
 
 HTML source is processed locally and held briefly in Chrome's memory-backed session storage. It is deleted immediately after the preview reads it and is never synchronized or sent to the extension developer or a third-party preview service.
 
-When the user explicitly enables Run scripts, scripts referenced by the previewed HTML may be downloaded from and communicate with third-party servers selected by that HTML.
+When the user explicitly enables Allow active content, scripts and absolute HTTPS assets referenced by the previewed HTML may be downloaded from and communicate with third-party servers selected by that HTML.
