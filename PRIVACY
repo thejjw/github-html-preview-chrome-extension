@@ -1,0 +1,3 @@
+This extension does not collect, transmit, or persist any personal browsing data.
+
+HTML source is processed locally and held briefly in Chrome's memory-backed session storage. It is deleted immediately after the preview reads it and is never synchronized or sent to the extension developer or a third-party preview service.
