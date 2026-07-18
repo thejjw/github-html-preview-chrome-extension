@@ -1,5 +1,7 @@
-This extension does not collect, transmit, or persist any personal browsing data.
+GitHub Local HTML Preview handles the URL and HTML source of a GitHub file only after the user requests a preview. This information is processed locally solely to provide the preview. The extension developer does not collect, receive, retain, sell, or use it for advertising or profiling.
 
-HTML source is processed locally and held briefly in Chrome's memory-backed session storage. It is deleted immediately after the preview reads it and is never synchronized or sent to the extension developer or a third-party preview service.
+The selected HTML source is held briefly in Chrome's memory-backed session storage while the preview tab opens. It is deleted immediately after one read and is never persisted or synchronized.
 
-When the user explicitly enables Allow active content, scripts and absolute HTTPS assets referenced by the previewed HTML may be downloaded from and communicate with third-party servers selected by that HTML.
+When the user explicitly enables Allow active content, scripts and absolute HTTPS assets referenced by the selected HTML may be downloaded from and communicate with third-party servers selected by that HTML. This mode is disabled by default and runs inside an isolated sandbox.
+
+Website content is used only for the extension's disclosed preview feature. It is not transferred except as necessary for user-directed active content, legal compliance, or security; it is not used for creditworthiness or lending; and no person is permitted to read it.
