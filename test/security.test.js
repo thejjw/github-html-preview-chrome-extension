@@ -31,5 +31,6 @@ test("default renderer removes active and outbound content", () => {
 test("script mode permits referenced scripts only after opt-in", () => {
   assert.doesNotMatch(sandbox, /querySelectorAll\("script\[src\]"\)/);
   assert.match(sandbox, /script-src 'unsafe-inline' 'unsafe-eval' https: http: data: blob:/);
+  assert.match(manifest.content_security_policy.sandbox, /script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:/);
   assert.match(sandbox, /event\.data\.runScripts \? "allow-scripts" : ""/);
 });
