@@ -4,4 +4,4 @@ The selected HTML source is held briefly in Chrome's memory-backed session stora
 
 When the user explicitly enables Allow active content, scripts and absolute HTTPS assets referenced by the selected HTML may be downloaded from and communicate with third-party servers selected by that HTML. This mode is disabled by default and runs inside an isolated sandbox.
 
-Website content is used only for the extension's disclosed preview feature. It is not transferred except as necessary for user-directed active content, legal compliance, or security; it is not used for creditworthiness or lending; and no person is permitted to read it.
+Website content is used only for previews and is never sold, used for advertising, or read by the developer.
