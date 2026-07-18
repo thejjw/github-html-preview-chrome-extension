@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: zlib-acknowledgement
+// Copyright (c) 2026 Jaewoo Jeon (@thejjw)
+
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;

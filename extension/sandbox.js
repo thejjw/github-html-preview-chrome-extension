@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: zlib-acknowledgement
+// Copyright (c) 2026 Jaewoo Jeon (@thejjw)
+
 (function () {
   "use strict";
   const BLOCKED_ELEMENTS = "base,link,object,embed,portal,frame,frameset,audio,video,source,track";

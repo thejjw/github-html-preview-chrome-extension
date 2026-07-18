@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: zlib-acknowledgement
+// Copyright (c) 2026 Jaewoo Jeon (@thejjw)
+
 importScripts("lib/core.js");
 
 const PREVIEW_PREFIX = "preview:";

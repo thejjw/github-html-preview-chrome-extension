@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: zlib-acknowledgement
+// Copyright (c) 2026 Jaewoo Jeon (@thejjw)
+
 (async function () {
   "use strict";
   const id = new URLSearchParams(location.search).get("id");

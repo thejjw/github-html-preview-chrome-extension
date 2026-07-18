@@ -4,8 +4,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.join(__dirname, "..");
-const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
-const sandbox = fs.readFileSync(path.join(root, "sandbox.js"), "utf8");
+const manifest = JSON.parse(fs.readFileSync(path.join(root, "extension", "manifest.json"), "utf8"));
+const sandbox = fs.readFileSync(path.join(root, "extension", "sandbox.js"), "utf8");
 
 test("manifest has a minimal permission surface", () => {
   assert.deepEqual(manifest.permissions, ["storage"]);

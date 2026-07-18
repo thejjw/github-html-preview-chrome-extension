@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const core = require("../lib/core.js");
+const core = require("../extension/lib/core.js");
 
 test("recognizes supported GitHub blob URLs", () => {
   for (const url of [

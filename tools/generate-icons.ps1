@@ -1,7 +1,7 @@
 param()
 
 Add-Type -AssemblyName System.Drawing
-$outputDirectory = Join-Path $PSScriptRoot "..\icons"
+$outputDirectory = Join-Path $PSScriptRoot "..\extension\icons"
 New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
 
 foreach ($size in 16, 32, 48, 128) {

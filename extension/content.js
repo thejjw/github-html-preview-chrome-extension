@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: zlib-acknowledgement
+// Copyright (c) 2026 Jaewoo Jeon (@thejjw)
+
 (function () {
   "use strict";
   const BUTTON_ID = "github-local-html-preview-button";

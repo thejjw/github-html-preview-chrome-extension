@@ -3,6 +3,7 @@
   "name": "GitHub Local HTML Preview",
   "version": "1.0.0",
   "description": "Preview GitHub HTML locally, including private repositories you can already access.",
+  "author": "@thejjw",
   "minimum_chrome_version": "112",
   "permissions": ["storage"],
   "host_permissions": ["https://github.com/*"],
@@ -17,6 +18,5 @@
     "run_at": "document_idle"
   }],
   "sandbox": { "pages": ["sandbox.html"] },
-  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
-  "action": { "default_title": "GitHub Local HTML Preview", "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png" } }
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
 }
