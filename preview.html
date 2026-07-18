@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Local HTML preview</title>
+  <link rel="stylesheet" href="preview.css">
+</head>
+<body>
+  <header>
+    <strong id="filename">Local HTML preview</strong>
+    <a id="source" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+    <label><input id="scripts" type="checkbox"> Run scripts</label>
+  </header>
+  <iframe id="sandbox" src="sandbox.html" title="HTML preview"></iframe>
+  <p id="error" role="alert" hidden></p>
+  <script src="preview.js"></script>
+</body>
+</html>
