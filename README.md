@@ -4,6 +4,28 @@ Preview GitHub HTML locally, including private repositories you can already acce
 
 The dependency-free Chrome extension adds a **Preview** button beside GitHub's **Raw** control on `.html` and `.htm` blob pages. It reads source already delivered to the authenticated GitHub page, opens a local full-tab preview, and keeps repository HTML outside the extension's privileged DOM.
 
+## Features
+
+- **Private repository support:** Reuses the GitHub access you already have without OAuth, personal access tokens, or GitHub App authorization.
+- **Local processing:** Never sends source to an extension developer, proxy, or hosted preview service.
+- **Safe by default:** Renders inline CSS and data assets while scripts and external resources remain blocked.
+- **Explicit script mode:** Runs inline JavaScript only after you enable **Run scripts** for that preview.
+- **GitHub navigation support:** Updates the button as GitHub moves between files without a full page load.
+- **No build step:** Uses plain Manifest V3 HTML, CSS, and JavaScript with no runtime dependencies.
+
+## Installation
+
+1. Download or clone this repository.
+2. Open `chrome://extensions` in Chrome 112 or later.
+3. Enable **Developer mode** (top right).
+4. Click **Load unpacked** and select the `extension` folder.
+
+## Usage
+
+1. Open a `.html` or `.htm` file on a GitHub blob page.
+2. Click **Preview** beside GitHub's **Raw** control.
+3. Optionally enable **Run scripts** in the preview toolbar to recreate the isolated preview with inline JavaScript enabled.
+
 ## Privacy and security
 
 - No OAuth, personal access token, GitHub App, proxy, or hosted preview service is used.
@@ -14,20 +36,18 @@ The dependency-free Chrome extension adds a **Preview** button beside GitHub's *
 
 The extension requests only `storage` and install-time access to `https://github.com/*`. It does not request `identity`, `cookies`, `tabs`, `<all_urls>`, raw-content hosts, or network-blocking permissions.
 
-## Install unpacked (Chrome 112+)
-
-1. Clone or download this directory.
-2. Open `chrome://extensions`.
-3. Enable **Developer mode**.
-4. Select **Load unpacked** and choose this repository directory.
-5. Open a GitHub HTML blob page and select **Preview** beside **Raw**.
-
 After updating the files, select **Reload** on the extension card and refresh GitHub. To package an internal ZIP from PowerShell:
 
 ```powershell
-$Files = 'manifest.json','background.js','content.js','preview.html','preview.css','preview.js','sandbox.html','sandbox.js','lib','icons','README.md'
-Compress-Archive -Path $Files -DestinationPath .\github-local-html-preview.zip -Force
+Compress-Archive -Path .\extension\* -DestinationPath .\github-local-html-preview.zip -Force
 ```
+
+## Permissions
+
+- `storage`: Holds a preview briefly in memory-backed session storage while its tab opens.
+- `https://github.com/*`: Adds the page button and reads or re-fetches the current GitHub blob page with the existing same-origin session.
+
+See [PERMISSIONS.md](PERMISSIONS.md) for the complete explanation.
 
 ## Verify
 
@@ -52,4 +72,14 @@ Future work:
 - Multi-page navigation inside the isolated preview.
 - Configurable, policy-controlled GitHub Enterprise hosts.
 
-GitHub's embedded React JSON and DOM selectors are undocumented. Extraction is centralized in `lib/core.js` and deliberately fails rather than silently rendering partial source when a supported complete representation is unavailable.
+GitHub's embedded React JSON and DOM selectors are undocumented. Extraction is centralized in `extension/lib/core.js` and deliberately fails rather than silently rendering partial source when a supported complete representation is unavailable.
+
+## License
+
+See [LICENSE](LICENSE).
+
+## Author
+
+- Jaewoo Jeon [@thejjw](https://github.com/thejjw)
+
+If you find this extension helpful, consider supporting its development through [GitHub Sponsors](https://github.com/sponsors/thejjw) or [Buy Me a Coffee](https://buymeacoffee.com/thejjw).
