@@ -20,7 +20,8 @@ The dependency-free Chrome extension adds a **Preview** button beside GitHub's *
 3. Enable **Developer mode** (top right).
 4. Click **Load unpacked** and select the `extension` folder.
 
-~~Also available on the [Chrome Web Store](https://chromewebstore.google.com/detail/dbabdphgaamgcibbfjaldmhnikccjnih).~~ *(Pending publication.)*
+**Alternatively, install from the [Chrome Web Store](https://chromewebstore.google.com/detail/dbabdphgaamgcibbfjaldmhnikccjnih)**  
+_(Note: The Chrome Web Store version may not always have the latest updates.)_
 
 ## Usage
 
