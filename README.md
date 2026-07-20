@@ -86,3 +86,5 @@ See [LICENSE](LICENSE).
 - Jaewoo Jeon [@thejjw](https://github.com/thejjw)
 
 If you find this extension helpful, consider supporting its development through [GitHub Sponsors](https://github.com/sponsors/thejjw) or [Buy Me a Coffee](https://buymeacoffee.com/thejjw).
+
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/default-yellow.png)](https://buymeacoffee.com/thejjw)
