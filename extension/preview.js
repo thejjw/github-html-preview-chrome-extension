@@ -22,7 +22,12 @@
   source.href = payload.sourceUrl;
   const frame = document.getElementById("sandbox");
   function render() {
-    frame.contentWindow.postMessage({ type: "RENDER", html: payload.html, runScripts: document.getElementById("scripts").checked }, "*");
+    frame.contentWindow.postMessage({
+      type: "RENDER",
+      html: payload.html,
+      runScripts: document.getElementById("scripts").checked,
+      rawBaseUrl: payload.rawBaseUrl,
+    }, "*");
   }
   frame.addEventListener("load", render);
   document.getElementById("scripts").addEventListener("change", render);

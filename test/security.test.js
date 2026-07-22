@@ -39,6 +39,9 @@ test("script mode permits referenced scripts only after opt-in", () => {
   assert.match(manifest.content_security_policy.sandbox, /font-src https: data: blob:/);
   assert.match(manifest.content_security_policy.sandbox, /media-src https: data: blob:/);
   assert.match(sandbox, /event\.data\.runScripts \? "allow-scripts" : ""/);
+  assert.match(sandbox, /GitHubHtmlPreview\.resolveAssetUrl/);
+  assert.match(sandbox, /rawBaseUrl/);
+  assert.match(previewJs, /rawBaseUrl: payload\.rawBaseUrl/);
 });
 
 test("preview explains source and script risk accessibly", () => {

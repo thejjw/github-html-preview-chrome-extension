@@ -2,7 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const core = require("../extension/lib/core.js");
 
-test("recognizes supported GitHub blob URLs", () => {
+test("recognizes supported GitHub blob URLs and derives raw asset paths", () => {
   for (const url of [
     "https://github.com/o/r/blob/main/index.html",
     "https://github.com/o/r/blob/v1/docs/PAGE.HTM?plain=1#L2",
@@ -10,6 +10,11 @@ test("recognizes supported GitHub blob URLs", () => {
   ]) assert.ok(core.parseBlobUrl(url), url);
   for (const url of ["https://github.com/o/r/raw/main/a.html", "https://evil.test/o/r/blob/main/a.html", "https://github.com/o/r/blob/main/a.js"])
     assert.equal(core.parseBlobUrl(url), null, url);
+  const parsed = core.parseBlobUrl("https://github.com/o/r/blob/main/docs/pages/index.html?plain=1#L2");
+  assert.equal(parsed.rawBaseUrl, "https://raw.githubusercontent.com/o/r/main/docs/pages/");
+  assert.equal(core.resolveAssetUrl("../img/logo.png", parsed.rawBaseUrl), "https://raw.githubusercontent.com/o/r/main/docs/img/logo.png");
+  assert.equal(core.resolveAssetUrl("/img/logo.png", parsed.rawBaseUrl), "/img/logo.png");
+  assert.equal(core.resolveAssetUrl("https://cdn.example/x.png", parsed.rawBaseUrl), "https://cdn.example/x.png");
 });
 
 test("extracts guarded raw lines from nested React JSON", () => {
@@ -38,8 +43,12 @@ test("rejects malformed, truncated, binary, empty, and oversized content", () =>
 test("validates exact, fresh messages and sender URLs", () => {
   const url = "https://github.com/o/r/blob/main/a.html";
   const payload = { html: "<p>x</p>", filename: "a.html", sourceUrl: url, createdAt: Date.now() };
-  assert.deepEqual(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, url), payload);
-  assert.deepEqual(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, "https://github.com/o/r/issues"), payload);
+  const expected = {
+    ...payload,
+    rawBaseUrl: "https://raw.githubusercontent.com/o/r/main/",
+  };
+  assert.deepEqual(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, url), expected);
+  assert.deepEqual(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, "https://github.com/o/r/issues"), expected);
   assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload }, "https://evil.test/x"), null);
   assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload: { ...payload, filename: "b.html" } }, url), null);
   assert.equal(core.validateOpenMessage({ type: "OPEN_PREVIEW", payload: { ...payload, sourceUrl: "https://evil.test/a.html" } }, url), null);

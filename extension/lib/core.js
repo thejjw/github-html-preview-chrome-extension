@@ -21,7 +21,16 @@
     if (parts.length < 5 || parts[2] !== "blob") return null;
     const filename = decodeURIComponent(parts.at(-1));
     if (!/\.html?$/i.test(filename)) return null;
-    return { filename, sourceUrl: `${url.origin}${url.pathname}${url.search}${url.hash}` };
+    const rawBaseUrl = `https://raw.githubusercontent.com/${parts.slice(0, 2).join("/")}/${parts.slice(3, -1).join("/")}/`;
+    return { filename, sourceUrl: `${url.origin}${url.pathname}${url.search}${url.hash}`, rawBaseUrl };
+  }
+
+  /** Resolve a path-relative asset URL against a validated GitHub raw directory. */
+  function resolveAssetUrl(value, rawBaseUrl) {
+    if (typeof value !== "string") return value;
+    const url = value.trim();
+    if (!url || url.startsWith("#") || url.startsWith("/") || /^[a-z][a-z\d+.-]*:/i.test(url)) return value;
+    try { return new URL(url, rawBaseUrl).href; } catch { return value; }
   }
 
   /** Measure a string as UTF-8 without depending on browser-only globals. */
@@ -84,8 +93,8 @@
     if (!source || filename !== source.filename || filename.length > MAX_FILENAME_LENGTH) return null;
     if (!Number.isFinite(createdAt) || Math.abs(Date.now() - createdAt) > 60_000) return null;
     try { validateHtml(html); } catch { return null; }
-    return { html, filename, sourceUrl, createdAt };
+    return { html, filename, sourceUrl, createdAt, rawBaseUrl: source.rawBaseUrl };
   }
 
-  return { MAX_HTML_BYTES, parseBlobUrl, validateHtml, extractFromJsonTexts, validateOpenMessage };
+  return { MAX_HTML_BYTES, parseBlobUrl, resolveAssetUrl, validateHtml, extractFromJsonTexts, validateOpenMessage };
 });
