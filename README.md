@@ -36,6 +36,7 @@ _(Note: The Chrome Web Store version may not always have the latest updates.)_
 - Source is processed locally, held briefly in memory-backed `chrome.storage.session`, consumed once, and never persisted, synchronized, or sent to the extension developer.
 - Scripts are off for every new preview. Inline CSS and `data:`/`blob:` images and fonts work; external scripts, styles, images, frames, media, forms, refreshes, popups, requests, and non-fragment links are blocked.
 - **Allow active content** explicitly recreates the opaque-origin preview with inline and referenced external scripts plus HTTPS styles, images, fonts, and media enabled. Path-relative references such as `./style.css` and `../images/logo.png` resolve against the file's `raw.githubusercontent.com` directory and work only when the browser can access those resources. Active content cannot access GitHub cookies, the GitHub DOM, extension APIs, the preview toolbar, the parent frame, or popups/top-level navigation. It may contact third parties, make outbound requests, or navigate its own isolated frame.
+- Detectable script, stylesheet, image, and media failures are collected in a preview warning. Browsers do not expose the HTTP status of failed subresources, so the extension cannot distinguish rate limiting from missing, blocked, CORS-rejected, or incompatible resources. Retry is manual to avoid amplifying a GitHub throttle.
 
 The extension requests only `storage` and install-time access to `https://github.com/*`. It does not request `identity`, `cookies`, `tabs`, `<all_urls>`, raw-content hosts, or network-blocking permissions.
 
@@ -65,7 +66,7 @@ For manual validation, test one public and one organization-private repository. 
 
 ## V1 limitations and future design
 
-V1 targets `github.com`. Path-relative scripts, styles, images, fonts, and media load from GitHub raw URLs only after explicit opt-in. Root-relative paths, `srcset`, private resources that are not directly browser-accessible, and multi-page navigation remain unsupported.
+V1 targets `github.com`. Path-relative scripts, styles, images, fonts, and media load from GitHub raw URLs only after explicit opt-in. Root-relative paths, `srcset`, private resources that are not directly browser-accessible, and multi-page navigation remain unsupported. Failures inside CSS, such as background images and nested imports, may not emit a browser error event and therefore may not appear in the warning.
 
 Future work:
 
