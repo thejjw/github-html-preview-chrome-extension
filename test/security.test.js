@@ -39,12 +39,19 @@ test("script mode permits referenced scripts only after opt-in", () => {
   assert.match(manifest.content_security_policy.sandbox, /font-src https: data: blob:/);
   assert.match(manifest.content_security_policy.sandbox, /media-src https: data: blob:/);
   assert.match(sandbox, /event\.data\.runScripts \? "allow-scripts" : ""/);
+  assert.match(sandbox, /GitHubHtmlPreview\.resolveAssetUrl/);
+  assert.match(sandbox, /rawBaseUrl/);
+  assert.match(previewJs, /rawBaseUrl: payload\.rawBaseUrl/);
+  assert.match(sandbox, /ASSET_FAILURE/);
+  assert.match(sandbox, /Resource error events intentionally report no HTTP status/);
+  assert.match(previewJs, /GitHub raw access may be unavailable or rate-limited/);
+  assert.doesNotMatch(previewJs, /setTimeout|setInterval/);
 });
 
 test("preview explains source and script risk accessibly", () => {
   assert.match(previewJs, /filename\.title = payload\.sourceUrl/);
   assert.match(previewHtml, /aria-describedby="scripts-warning"/);
   assert.match(previewHtml, /Allow active content/);
-  assert.match(previewHtml, /absolute HTTPS assets/);
+  assert.match(previewHtml, /path-relative GitHub raw resources/);
   assert.match(previewHtml, /Use at your own risk\./);
 });

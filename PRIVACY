@@ -2,6 +2,6 @@ GitHub Local HTML Preview handles the URL and HTML source of a GitHub file only 
 
 The selected HTML source is held briefly in Chrome's memory-backed session storage while the preview tab opens. It is deleted immediately after one read and is never persisted or synchronized.
 
-When the user explicitly enables Allow active content, scripts and absolute HTTPS assets referenced by the selected HTML may be downloaded from and communicate with third-party servers selected by that HTML. This mode is disabled by default and runs inside an isolated sandbox.
+When the user explicitly enables Allow active content, scripts and HTTPS assets referenced by the selected HTML may be downloaded from and communicate with third-party servers selected by that HTML. Path-relative assets are resolved against GitHub raw URLs. This mode is disabled by default and runs inside an isolated sandbox.
 
 Website content is used only for previews and is never sold, used for advertising, or read by the developer.
