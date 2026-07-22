@@ -9,8 +9,8 @@ The dependency-free Chrome extension adds a **Preview** button beside GitHub's *
 - **Private repository support:** Reuses the GitHub access you already have without OAuth, personal access tokens, or GitHub App authorization.
 - **Local processing:** Never sends source to an extension developer, proxy, or hosted preview service.
 - **Safe by default:** Renders inline CSS and data assets while scripts and external resources remain blocked.
-- **Explicit active-content mode:** Loads scripts and HTTPS styles, images, fonts, and media only after you enable **Allow active content** for that preview. Path-relative assets resolve against the file's GitHub raw directory.
-- **GitHub navigation support:** Updates the button as GitHub moves between files without a full page load.
+- **Explicit active-content mode:** Loads scripts and HTTPS styles, images, fonts, and media only after you enable **Allow active content** for that preview. Path-relative assets resolve against the file's GitHub repository directory.
+- **GitHub navigation support:** Integrates the button to default GitHub interface.
 - **No build step:** Uses plain Manifest V3 HTML, CSS, and JavaScript with no runtime dependencies.
 
 ## Installation
@@ -59,7 +59,7 @@ The tests require a currently supported Node.js release and no installed package
 
 ```powershell
 npm test
-Get-Content .\manifest.json | ConvertFrom-Json | Out-Null
+Get-Content .\extension\manifest.json | ConvertFrom-Json | Out-Null
 ```
 
 For manual validation, test one public and one organization-private repository. Confirm there is no OAuth/PAT prompt or third-party preview request, a preview URL works only once, scripts do not run by default, the toggle permits inline scripts, and truncated/binary/oversized source produces a clear error.
