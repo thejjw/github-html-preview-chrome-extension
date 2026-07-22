@@ -65,14 +65,27 @@
       ? "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; style-src 'unsafe-inline' https:; img-src https: data: blob:; font-src https: data: blob:; media-src https: data: blob:; connect-src *; form-action *"
       : "default-src 'none'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: blob:; form-action 'none'";
     doc.head.prepend(csp);
+    if (runScripts) {
+      const reporter = doc.createElement("script");
+      // Resource error events intentionally report no HTTP status, so the UI must describe possible causes rather than claim a 429.
+      reporter.textContent = `addEventListener("error",(event)=>{const node=event.target;if(!(node instanceof Element))return;const url=node.currentSrc||node.src||node.href||node.poster;if(typeof url==="string"&&/^https?:/i.test(url))parent.postMessage({type:"ASSET_FAILURE",kind:node.localName,url},"*")},true);`;
+      csp.after(reporter);
+    }
     return `<!doctype html>\n${doc.documentElement.outerHTML}`;
   }
 
+  let frame = null;
   addEventListener("message", (event) => {
-    if (event.source !== parent || event.data?.type !== "RENDER" || typeof event.data.html !== "string") return;
-    const frame = document.createElement("iframe");
-    frame.setAttribute("sandbox", event.data.runScripts ? "allow-scripts" : "");
-    frame.srcdoc = prepare(event.data.html, Boolean(event.data.runScripts), event.data.rawBaseUrl);
-    document.body.replaceChildren(frame);
+    if (event.source === parent && event.data?.type === "RENDER" && typeof event.data.html === "string") {
+      frame = document.createElement("iframe");
+      frame.setAttribute("sandbox", event.data.runScripts ? "allow-scripts" : "");
+      frame.srcdoc = prepare(event.data.html, Boolean(event.data.runScripts), event.data.rawBaseUrl);
+      document.body.replaceChildren(frame);
+      return;
+    }
+    if (event.source !== frame?.contentWindow || event.data?.type !== "ASSET_FAILURE") return;
+    const { kind, url } = event.data;
+    if (typeof kind !== "string" || typeof url !== "string" || url.length > 2048 || !/^https?:\/\//i.test(url)) return;
+    parent.postMessage({ type: "ASSET_FAILURE", kind: kind.slice(0, 32), url }, "*");
   });
 })();

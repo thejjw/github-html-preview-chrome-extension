@@ -3,12 +3,17 @@
 
 :root { color-scheme: light dark; font: 14px system-ui, sans-serif; }
 * { box-sizing: border-box; }
-body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto auto 1fr; overflow: hidden; }
 header { display: flex; gap: 1rem; align-items: center; min-height: 44px; padding: .5rem 1rem; background: Canvas; border-bottom: 1px solid GrayText; }
 header strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 header a { margin-left: auto; }
 header label { white-space: nowrap; }
 iframe { width: 100%; height: 100%; border: 0; background: white; }
+#asset-warning { padding: .6rem 1rem; color: #7a4d00; background: #fff8c5; border-bottom: 1px solid #d4a72c; }
+#asset-warning button { margin-left: .75rem; }
+#asset-warning details { margin-top: .4rem; }
+#asset-warning ul { max-height: 8rem; margin: .4rem 0 0; overflow: auto; font: 12px ui-monospace, monospace; }
+@media (prefers-color-scheme: dark) { #asset-warning { color: #f2cc60; background: #3b2e00; } }
 #error { margin: 2rem; color: #cf222e; }
 body.failed iframe, body.failed header label { display: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
