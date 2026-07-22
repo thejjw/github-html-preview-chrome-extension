@@ -48,6 +48,6 @@ test("preview explains source and script risk accessibly", () => {
   assert.match(previewJs, /filename\.title = payload\.sourceUrl/);
   assert.match(previewHtml, /aria-describedby="scripts-warning"/);
   assert.match(previewHtml, /Allow active content/);
-  assert.match(previewHtml, /absolute HTTPS assets/);
+  assert.match(previewHtml, /path-relative GitHub raw resources/);
   assert.match(previewHtml, /Use at your own risk\./);
 });
