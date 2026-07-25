@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GitHub Local HTML Preview",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Preview GitHub HTML locally, including private repositories you can already access.",
   "author": "@thejjw",
   "minimum_chrome_version": "112",
