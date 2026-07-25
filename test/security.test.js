@@ -9,6 +9,7 @@ const sandbox = fs.readFileSync(path.join(root, "extension", "sandbox.js"), "utf
 const sandboxHtml = fs.readFileSync(path.join(root, "extension", "sandbox.html"), "utf8");
 const previewHtml = fs.readFileSync(path.join(root, "extension", "preview.html"), "utf8");
 const previewJs = fs.readFileSync(path.join(root, "extension", "preview.js"), "utf8");
+const previewCss = fs.readFileSync(path.join(root, "extension", "preview.css"), "utf8");
 const background = fs.readFileSync(path.join(root, "extension", "background.js"), "utf8");
 
 test("manifest has a minimal permission surface", () => {
@@ -24,6 +25,8 @@ test("sandbox policy cannot acquire the extension origin", () => {
   assert.doesNotMatch(manifest.content_security_policy.sandbox, /allow-same-origin/);
   assert.deepEqual(manifest.sandbox.pages, ["sandbox.html"]);
   assert.match(sandboxHtml, /iframe\{position:fixed;inset:0;width:100vw;height:100vh;border:0\}/);
+  assert.match(previewCss, /body \{[^}]*display: flex;[^}]*flex-direction: column/);
+  assert.match(previewCss, /#sandbox \{[^}]*flex: 1 1 auto;[^}]*min-height: 0/);
 });
 
 test("default renderer removes active and outbound content", () => {
