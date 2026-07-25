@@ -9,7 +9,7 @@ The dependency-free Chrome extension adds a **Preview** button beside GitHub's *
 - **Private repository support:** Reuses the GitHub access you already have without OAuth, personal access tokens, or GitHub App authorization.
 - **Local processing:** Never sends source to an extension developer, proxy, or hosted preview service.
 - **Safe by default:** Renders inline CSS and data assets while scripts and external resources remain blocked.
-- **Explicit active-content mode:** Loads scripts and HTTPS styles, images, fonts, and media only after you enable **Allow active content** for that preview. Path-relative assets resolve against the file's GitHub repository directory.
+- **Explicit active-content mode:** Loads scripts and HTTPS styles, images, fonts, and media only after you enable **Allow active content** for that preview. Path-relative assets resolve against the file's GitHub repository directory, and Chrome asks separately before allowing public GitHub Raw CSS and JavaScript.
 - **GitHub navigation support:** Integrates the button to default GitHub interface.
 - **No build step:** Uses plain Manifest V3 HTML, CSS, and JavaScript with no runtime dependencies.
 
@@ -35,10 +35,10 @@ _(Note: The Chrome Web Store version may not always have the latest updates.)_
 - Private repositories work only when you can already open the blob page in the current GitHub session. Organization SSO, IP restrictions, and browser extension policies still apply.
 - Source is processed locally, held briefly in memory-backed `chrome.storage.session`, consumed once, and never persisted, synchronized, or sent to the extension developer.
 - Scripts are off for every new preview. Inline CSS and `data:`/`blob:` images and fonts work; external scripts, styles, images, frames, media, forms, refreshes, popups, requests, and non-fragment links are blocked.
-- **Allow active content** explicitly recreates the opaque-origin preview with inline and referenced external scripts plus HTTPS styles, images, fonts, and media enabled. Path-relative references such as `./style.css` and `../images/logo.png` resolve against the file's `raw.githubusercontent.com` directory and work only when the browser can access those resources. Active content cannot access GitHub cookies, the GitHub DOM, extension APIs, the preview toolbar, the parent frame, or popups/top-level navigation. It may contact third parties, make outbound requests, or navigate its own isolated frame.
-- Detectable script, stylesheet, image, and media failures are collected in a preview warning. Browsers do not expose the HTTP status of failed subresources, so the extension cannot distinguish rate limiting from missing, blocked, CORS-rejected, or incompatible resources. Retry is manual to avoid amplifying a GitHub throttle.
+- **Allow active content** explicitly recreates the opaque-origin preview with inline and referenced external scripts plus HTTPS styles, images, fonts, and media enabled. Path-relative references such as `./style.css` and `../images/logo.png` resolve against the file's `raw.githubusercontent.com` directory. When you grant the optional GitHub Raw permission, the extension corrects CSS and JavaScript response types only for opted-in preview tabs so Chrome can load public raw files without weakening `nosniff`. Active content cannot access GitHub cookies, the GitHub DOM, extension APIs, the preview toolbar, the parent frame, or popups/top-level navigation. It may contact third parties, make outbound requests, or navigate its own isolated frame.
+- Detectable script, stylesheet, image, and media failures are collected in a preview warning. Browsers do not expose the HTTP status of failed subresources, so missing, inaccessible, blocked, or otherwise incompatible resources share a neutral failure message. Retry is manual and does not stagger or automatically repeat requests.
 
-The extension requests only `storage` and install-time access to `https://github.com/*`. It does not request `identity`, `cookies`, `tabs`, `<all_urls>`, raw-content hosts, or network-blocking permissions.
+The extension requests `storage`, install-time access to `https://github.com/*`, and the warning-free `declarativeNetRequestWithHostAccess` capability. Access to `https://raw.githubusercontent.com/*` is optional and requested only when you enable active content. It does not request `identity`, `cookies`, `tabs`, `<all_urls>`, or broad network-blocking access.
 
 After updating the files, select **Reload** on the extension card and refresh GitHub. To package an internal ZIP from PowerShell:
 
@@ -50,6 +50,8 @@ Compress-Archive -Path .\extension\* -DestinationPath .\github-local-html-previe
 
 - `storage`: Holds a preview briefly in memory-backed session storage while its tab opens.
 - `https://github.com/*`: Adds the page button and reads or re-fetches the current GitHub blob page with the existing same-origin session.
+- `declarativeNetRequestWithHostAccess`: Lets the extension correct response types on hosts you separately approve without reading response bodies or showing an install-time network warning.
+- Optional `https://raw.githubusercontent.com/*`: Allows tab-scoped response-type correction for public GitHub Raw stylesheets and scripts after you enable active content.
 
 See [PERMISSIONS.md](PERMISSIONS.md) for the complete explanation.
 
@@ -62,11 +64,11 @@ npm test
 Get-Content .\extension\manifest.json | ConvertFrom-Json | Out-Null
 ```
 
-For manual validation, test one public and one organization-private repository. Confirm there is no OAuth/PAT prompt or third-party preview request, a preview URL works only once, scripts do not run by default, the toggle permits inline scripts, and truncated/binary/oversized source produces a clear error.
+For manual validation, test one public and one organization-private repository. Confirm there is no OAuth/PAT prompt or third-party preview service, a preview URL works only once, scripts do not run by default, the toggle permits inline scripts, the optional GitHub Raw prompt appears only from an active-content gesture, public relative CSS and JavaScript load after approval, and truncated/binary/oversized source produces a clear error.
 
 ## V1 limitations and future design
 
-V1 targets `github.com`. Path-relative scripts, styles, images, fonts, and media load from GitHub raw URLs only after explicit opt-in. Root-relative paths, `srcset`, private resources that are not directly browser-accessible, and multi-page navigation remain unsupported. Failures inside CSS, such as background images and nested imports, may not emit a browser error event and therefore may not appear in the warning.
+V1 targets `github.com`. Path-relative scripts, styles, images, fonts, and media load from GitHub Raw URLs only after explicit opt-in. Public raw CSS and JavaScript receive tab-scoped response-type correction after optional permission approval. Root-relative paths, `srcset`, private raw resources, missing files, third-party server restrictions, and multi-page navigation remain unsupported. Failures inside CSS, such as background images and nested imports, may not emit a browser error event and therefore may not appear in the warning.
 
 Future work:
 
