@@ -8,12 +8,14 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, "extension", "manife
 const sandbox = fs.readFileSync(path.join(root, "extension", "sandbox.js"), "utf8");
 const previewHtml = fs.readFileSync(path.join(root, "extension", "preview.html"), "utf8");
 const previewJs = fs.readFileSync(path.join(root, "extension", "preview.js"), "utf8");
+const background = fs.readFileSync(path.join(root, "extension", "background.js"), "utf8");
 
 test("manifest has a minimal permission surface", () => {
-  assert.deepEqual(manifest.permissions, ["storage"]);
+  assert.deepEqual(manifest.permissions, ["storage", "declarativeNetRequestWithHostAccess"]);
   assert.deepEqual(manifest.host_permissions, ["https://github.com/*"]);
+  assert.deepEqual(manifest.optional_host_permissions, ["https://raw.githubusercontent.com/*"]);
   assert.equal(manifest.web_accessible_resources, undefined);
-  for (const permission of ["identity", "cookies", "tabs", "<all_urls>"]) assert.ok(!manifest.permissions.includes(permission));
+  for (const permission of ["identity", "cookies", "tabs", "<all_urls>", "declarativeNetRequest"]) assert.ok(!manifest.permissions.includes(permission));
 });
 
 test("sandbox policy cannot acquire the extension origin", () => {
@@ -44,8 +46,14 @@ test("script mode permits referenced scripts only after opt-in", () => {
   assert.match(previewJs, /rawBaseUrl: payload\.rawBaseUrl/);
   assert.match(sandbox, /ASSET_FAILURE/);
   assert.match(sandbox, /Resource error events intentionally report no HTTP status/);
-  assert.match(previewJs, /GitHub raw access may be unavailable or rate-limited/);
+  assert.doesNotMatch(previewJs, /rate-limit|rate limit/i);
   assert.doesNotMatch(previewJs, /setTimeout|setInterval/);
+  assert.match(previewJs, /chrome\.permissions\.request/);
+  assert.match(previewJs, /ENABLE_RAW_MIME_RULES/);
+  assert.match(previewJs, /DISABLE_RAW_MIME_RULES/);
+  assert.match(background, /GitHubRawMimeRules\.previewTabId/);
+  assert.match(background, /sender, chrome\.runtime\.getURL\("preview\.html"\)/);
+  assert.match(background, /chrome\.tabs\.onRemoved/);
 });
 
 test("preview explains source and script risk accessibly", () => {

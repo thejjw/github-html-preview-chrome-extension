@@ -5,8 +5,9 @@
   "description": "Preview GitHub HTML locally, including private repositories you can already access.",
   "author": "@thejjw",
   "minimum_chrome_version": "112",
-  "permissions": ["storage"],
+  "permissions": ["storage", "declarativeNetRequestWithHostAccess"],
   "host_permissions": ["https://github.com/*"],
+  "optional_host_permissions": ["https://raw.githubusercontent.com/*"],
   "background": { "service_worker": "background.js" },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'",

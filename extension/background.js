@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: zlib-acknowledgement
 // Copyright (c) 2026 Jaewoo Jeon (@thejjw)
 
-importScripts("lib/core.js");
+importScripts("lib/core.js", "lib/raw-mime-rules.js");
 
 const PREVIEW_PREFIX = "preview:";
+const rawMimeRules = GitHubRawMimeRules.createManager(chrome.declarativeNetRequest);
 
 /** Validate, store, and open a single-use preview. */
 async function openPreview(message, sender) {
@@ -33,10 +34,27 @@ async function takePreview(message, sender) {
   return result[key] || null;
 }
 
+/** Enable or disable GitHub Raw MIME correction for the sending preview tab. */
+async function setRawMimeRules(message, sender) {
+  const tabId = GitHubRawMimeRules.previewTabId(sender, chrome.runtime.getURL("preview.html"));
+  if (tabId === null) throw new Error("Invalid preview rule request.");
+  const enabled = message.type === "ENABLE_RAW_MIME_RULES";
+  if (enabled && !await chrome.permissions.contains({ origins: [GitHubRawMimeRules.RAW_ORIGIN] })) {
+    throw new Error("GitHub Raw access has not been granted.");
+  }
+  await rawMimeRules.setEnabled(tabId, enabled);
+  return { enabled };
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const operation = message?.type === "OPEN_PREVIEW" ? openPreview(message, sender)
     : message?.type === "TAKE_PREVIEW" ? takePreview(message, sender)
+      : message?.type === "ENABLE_RAW_MIME_RULES" || message?.type === "DISABLE_RAW_MIME_RULES" ? setRawMimeRules(message, sender)
       : Promise.resolve(null);
   operation.then((value) => sendResponse({ ok: true, value }), (error) => sendResponse({ ok: false, error: error.message }));
   return true;
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  rawMimeRules.setEnabled(tabId, false).catch((error) => console.warn("Failed to remove GitHub Raw MIME rules", error));
 });
